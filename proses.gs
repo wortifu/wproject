@@ -116,16 +116,17 @@ function prosesPesan(update) {
         if (msg.from.last_name)
           nama += ' ' + msg.from.last_name
         // perhatikan, ini menggunakan sendMsg bukan sendMessage
-        var pesan = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + "</b>, Terimakasih telah menggunakan <u>wproject</u>"
+        var pesan = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>, Terimakasih telah menggunakan <u>wproject</u>"
         
-        pesan += "\n\n ⌐<b>Berikut fitur bot :</b>"
-        pesan += "\n\n 📌 <b>Silahkan klik</b> /getloker untuk mendapat info lowongan kerja ter update (disnakerja.com)"
-        pesan += "\n\n 🏙 <b>Silahkan kirimkan foto/gambar untuk konversi gambar menjadi text</b>"
-        pesan += "\n\n 📍 <b>Silahkan kirimkan Lokasi untuk mendapatkan info lokasi anda</b>"
+        pesan += "\n\n <b>Berikut fitur bot :</b>"
+        pesan += "\n\n 📌 <b>kirimkan Nomor WA</b> ( direct WhatsApp message tanpa menyimpan nomor )"
+        pesan += "\n\n 📌 <b>Kirimkan foto/gambar untuk konversi gambar menjadi text</b>"
+        pesan += "\n\n 📌 <b>Kirimkan Lokasi untuk mendapatkan info lokasi anda</b>"
         pesan += "\n\n 👉 Kirim <code>!lok (nama tempat) </code>untuk mencari lokasi berdasarkan nama tempat"
         pesan += "\n [?] Cth : <code>!lok Simpang lima gumul</code>"
         pesan += "\n\n 👉 Kirim <code>!lok (-lat,long) </code>untuk mencari lokasi berdasarkan koordinat"
         pesan += "\n [?] Cth : <code>!lok -7.559284, 112.204018</code>"
+        pesan += "\n\n 📌 <b>klik</b> /other menu lainnya..."
 
         var keyboard = []
 
@@ -139,20 +140,63 @@ function prosesPesan(update) {
           tg.button.text('❓ About', 'me_click')
         ]
 
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + ' Menu > start', 'HTML' )
         return tg.sendMsgKeyboardInline(msg, pesan, keyboard, 'HTML')
       }
 
       // jika user ketik /ping, bot akan jawab Pong!
       // pola dan jawaban paling sederhana
- 
+    var pola = /^[\/!]other$/i
+      if (pola.exec(msg.text)) {
+      var nama = msg.from.first_name
+        if (msg.from.last_name)
+          nama += ' ' + msg.from.last_name
+        // perhatikan, ini menggunakan sendMsg bukan sendMessage
+        var pesanother = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>, Berikut menu lainnya"
+        
+        pesanother += "\n\n 📌 <b>klik</b> /cekid untuk Cek ID telegram kamu"
+        pesanother += "\n 📌 <b>klik</b> /random (generate angka 1-999999)"
+        pesanother += "\n 📌 <b>klik</b> /infoloker scrap (disnakerja.com)"
+        pesanother += "\n 📌 <b>klik</b> /ping cek status bot"
+        pesanother += "\n\n\n Back to /start"
+
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + ' Menu > other', 'HTML' )
+        return tg.sendMessage(msg.chat.id, pesanother, 'HTML', false, false, msg.message_id)
+
+      }
+
     var pola = /^[\/!]ping$/i
       if (pola.exec(msg.text)) {
         // balas pong dengan mereply pesan
         // menggunakan parse_mode Markdown
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > ping", 'HTML' )
         return tg.sendMessage(msg.chat.id, '🏓 *Pooong! bot online*', 'Markdown', false, false, msg.message_id)
       }
-      
+    
+    var pola = /^[\/!]cekid$/i
+      if (pola.exec(msg.text)) {
+      let text ="ID kamu : <code>" + msg.from.id + "</code>\n";
+        text +="Username kamu : @" + msg.from.username;
+        text +="\nNama kamu : " + msg.from.first_name + " " + msg.from.last_name;
 
+
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > cekid", 'HTML' )
+        return tg.sendMessage(msg.chat.id, text, 'HTML', false, true, true)
+      }
+      var pola = /^[\/!]random$/i
+      if (pola.exec(msg.text)) {
+      let text ="> Generated :\n<code>" + tg.util.random(1,999999) + "</code>";
+        
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > random", 'HTML' )
+        return tg.sendMessage(msg.chat.id, text, 'HTML', false, true, true)
+      }
+      var pola = /^\d+/i
+      if (pola.exec(msg.text)) {
+        tg.sendMsg(msg, '✍🏻 <b>Got it</b>', 'HTML', false, true)
+        tg.sendChatAction(msg.chat.id, 'typing')
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > wa.me", 'HTML' )
+      return tg.sendMessage(msg.chat.id, 'Generated Link :\n https://wa.me/62'+ msg.text, 'HTML', false, true, true)
+      }
       // akhir deteksi pesan text
     }
 
@@ -188,8 +232,9 @@ function prosesPesan(update) {
 
   // Scraping Blog BangHasan
     // Trigger: /get atau !get
-    if (/[\/!]getloker/i.exec(msg.text) ) {
+    if (/[\/!]infoloker/i.exec(msg.text) ) {
        var pesan = getBlogBangHasan();
+       tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > infoloker", 'HTML' )
        return tg.kirimPesan(msg.chat.id, pesan, 'HTML', true);
     }
 
