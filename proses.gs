@@ -24,6 +24,7 @@ function prosesPesan(update) {
 
     // penyederhanaan variable
     var msg = update.message;
+    var mrep = msg.message_id 
 
     // geoCode
     // syntax !lokasi (teks minimal 3 huruf)
@@ -37,7 +38,7 @@ function prosesPesan(update) {
       var response = geocoder.geocode(cocok[2]);
 
       // periksa hasilnya, jika tidak ketemu keluarkan pesan error
-      if (response.status !== 'OK') return tg.sendMsg(msg, "🚫 Lokasi tidak Ketemu.", 'HTML', false, msg.message_id);
+      if (response.status !== 'OK') return tg.sendMsg(msg, "🚫 Lokasi tidak Ketemu.", 'HTML', false, mrep);
 
       // jika ketemu, ambil aja data pertama
 
@@ -55,7 +56,7 @@ function prosesPesan(update) {
       // kirim Venue, ada di dokumentasi Lib V2
       // tg.sendVenue(chat_id, latitude, longitude, title, address, foursquare_id, foursquare_type, disable_notification, reply_to_message_id, reply_markup)
 
-      return tg.sendVenue(msg.chat.id, latitude, longitude, title, address, false, false, false, msg.message_id)
+      return tg.sendVenue(msg.chat.id, latitude, longitude, title, address, false, false, false, mrep)
 
       // --> akhir cek geoCode
     }
@@ -73,7 +74,7 @@ function prosesPesan(update) {
       var response = geocoder.reverseGeocode(cocok[1], cocok[2]);
 
       // periksa hasilnya, jika tidak ketemu keluarkan pesan error
-      if (response.status !== 'OK') return tg.sendMsg(msg, "🚫 Lokasi koordinat tidak Ketemu.", 'HTML', false, msg.message_id);
+      if (response.status !== 'OK') return tg.sendMsg(msg, "🚫 Lokasi koordinat tidak Ketemu.", 'HTML', false, mrep);
 
       // jika ketemu, ambil aja data pertama
 
@@ -91,7 +92,7 @@ function prosesPesan(update) {
       // kirim Venue, ada di dokumentasi Lib V2
       // tg.sendVenue(chat_id, latitude, longitude, title, address, foursquare_id, foursquare_type, disable_notification, reply_to_message_id, reply_markup)
 
-      return tg.sendVenue(msg.chat.id, latitude, longitude, title, address, false, false, false, msg.message_id)
+      return tg.sendVenue(msg.chat.id, latitude, longitude, title, address, false, false, false, mrep)
 
       // --> akhir cek reverse GeoCode
     }
@@ -104,7 +105,7 @@ function prosesPesan(update) {
 
       // penyusunan teks untuk dikirim
       var teks = `📍 Posisi kamu di koordinat: <code>${location.latitude}, ${location.longitude}</code>.`;
-      return tg.sendMsg(msg, teks, 'HTML', false, msg.message_id);
+      return tg.sendMsg(msg, teks, 'HTML', false, mrep);
     }
     // jika ada pesan berupa text
     if (msg.text) {
@@ -116,17 +117,18 @@ function prosesPesan(update) {
         if (msg.from.last_name)
           nama += ' ' + msg.from.last_name
         // perhatikan, ini menggunakan sendMsg bukan sendMessage
-        var pesan = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>, Terimakasih telah menggunakan <u>wproject</u>"
+        var 
+        pesan = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>, Terimakasih telah menggunakan <u>wproject</u>"
         
         pesan += "\n\n <b>Berikut fitur bot :</b>"
-        pesan += "\n\n 📌 <b>kirimkan Nomor WA</b> ( direct WhatsApp message tanpa menyimpan nomor )"
-        pesan += "\n\n 📌 <b>Kirimkan foto/gambar untuk konversi gambar menjadi text</b>"
-        pesan += "\n\n 📌 <b>Kirimkan Lokasi untuk mendapatkan info lokasi anda</b>"
+        pesan += "\n\n📌 <b>kirimkan Nomor WA</b> ( direct WhatsApp message tanpa menyimpan nomor )"
+        pesan += "\n\n📌 <b>Kirimkan foto/gambar untuk konversi gambar menjadi text</b>"
+        pesan += "\n\n📌 <b>Kirimkan Lokasi untuk mendapatkan info lokasi anda</b>"
         pesan += "\n\n 👉 Kirim <code>!lok (nama tempat) </code>untuk mencari lokasi berdasarkan nama tempat"
-        pesan += "\n [?] Cth : <code>!lok Simpang lima gumul</code>"
+        pesan += "\n[?] : <code>!lok Simpang lima gumul</code>"
         pesan += "\n\n 👉 Kirim <code>!lok (-lat,long) </code>untuk mencari lokasi berdasarkan koordinat"
-        pesan += "\n [?] Cth : <code>!lok -7.559284, 112.204018</code>"
-        pesan += "\n\n 📌 <b>klik</b> /other menu lainnya..."
+        pesan += "\n[?] : <code>!lok -7.559284, 112.204018</code>"
+        pesan += "\n\n\n↘️ <b>klik</b> /other menu lainnya..."
 
         var keyboard = []
 
@@ -134,14 +136,16 @@ function prosesPesan(update) {
         // index dimulai dari 0
         keyboard[0] = [
           tg.button.url('😷 @wortifu', 'https://t.me/wortifu'),
-        ]
-        // keyboard baris kedua
-        keyboard[1] = [
+          tg.button.url('📄 github', 'https://github.com/wortifu/wproject'),
           tg.button.text('❓ About', 'me_click')
         ]
-
+        // keyboard baris kedua
+        //keyboard[1] = [
+         // tg.button.text('👉 menu lainnya', 'me_other')
+        //] 
+        
         tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + ' Menu > start', 'HTML' )
-        return tg.sendMsgKeyboardInline(msg, pesan, keyboard, 'HTML')
+        return tg.sendMsgKeyboardInline(msg, pesan, keyboard, 'HTML',false,false, mrep)
       }
 
       // jika user ketik /ping, bot akan jawab Pong!
@@ -152,16 +156,24 @@ function prosesPesan(update) {
         if (msg.from.last_name)
           nama += ' ' + msg.from.last_name
         // perhatikan, ini menggunakan sendMsg bukan sendMessage
-        var pesanother = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>, Berikut menu lainnya"
-        
+        var 
+        pesanother = "🙋🏽 Halo, <b>" + tg.util.clearHTML(nama) + ' ( @' + msg.from.username + ' ) ' + "</b>\nBerikut menu lainnya:"
         pesanother += "\n\n 📌 <b>klik</b> /cekid untuk Cek ID telegram kamu"
         pesanother += "\n 📌 <b>klik</b> /random (generate angka 1-999999)"
-        pesanother += "\n 📌 <b>klik</b> /infoloker scrap (disnakerja.com)"
         pesanother += "\n 📌 <b>klik</b> /ping cek status bot"
-        pesanother += "\n\n\n Back to /start"
+        pesanother += "\n\n\n↘️ Back to /start ..."
+       
+       var keyboard = []
+
+        // keyboard baris pertama
+        // index dimulai dari 0
+        keyboard[0] = [
+          tg.button.url('😷 @wortifu', 'https://t.me/wortifu'),
+          tg.button.text('❓ About', 'me_click')
+        ]
 
         tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + ' Menu > other', 'HTML' )
-        return tg.sendMessage(msg.chat.id, pesanother, 'HTML', false, false, msg.message_id)
+        return tg.sendMsgKeyboardInline(msg, pesanother,keyboard, 'HTML', false, false, mrep)
 
       }
 
@@ -169,7 +181,7 @@ function prosesPesan(update) {
       if (pola.exec(msg.text)) {
         // balas pong dengan mereply pesan
         // menggunakan parse_mode Markdown
-        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > ping", 'HTML' )
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > ping", 'HTML', false, msg.message_id)
         return tg.sendMessage(msg.chat.id, '🏓 *Pooong! bot online*', 'Markdown', false, false, msg.message_id)
       }
     
@@ -181,22 +193,24 @@ function prosesPesan(update) {
 
 
         tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > cekid", 'HTML' )
-        return tg.sendMessage(msg.chat.id, text, 'HTML', false, true, true)
+        return tg.sendMessage(msg.chat.id, text, 'HTML', false,false, msg.message_id)
       }
       var pola = /^[\/!]random$/i
       if (pola.exec(msg.text)) {
       let text ="> Generated :\n<code>" + tg.util.random(1,999999) + "</code>";
         
         tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > random", 'HTML' )
-        return tg.sendMessage(msg.chat.id, text, 'HTML', false, true, true)
+        return tg.sendMessage(msg.chat.id, text, 'HTML', false,false, msg.message_id)
       }
       var pola = /^\d+/i
       if (pola.exec(msg.text)) {
+
         tg.sendMsg(msg, '✍🏻 <b>Got it</b>', 'HTML', false, true)
         tg.sendChatAction(msg.chat.id, 'typing')
-        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > wa.me", 'HTML' )
-      return tg.sendMessage(msg.chat.id, 'Generated Link :\n https://wa.me/62'+ msg.text, 'HTML', false, true, true)
+        tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > wa.me"+ msg.text, 'HTML' )
+      return tg.sendMessage(msg.chat.id, '👉 Generated Link :\n https://wa.me/62'+ msg.text, 'HTML', true,false, msg.message_id)
       }
+      
       // akhir deteksi pesan text
     }
 
@@ -230,12 +244,6 @@ function prosesPesan(update) {
     return prosesCallback(update.callback_query)
   }
 
-  // Scraping Blog BangHasan
-    // Trigger: /get atau !get
-    if (/[\/!]infoloker/i.exec(msg.text) ) {
-       var pesan = getBlogBangHasan();
-       tg.sendMessage(adminBot, 'Data dari <code>' + msg.from.id + '</code> @' + msg.from.username + " Menu > infoloker", 'HTML' )
-       return tg.kirimPesan(msg.chat.id, pesan, 'HTML', true);
-    }
+  
 
 }
